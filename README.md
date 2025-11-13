@@ -1,0 +1,2 @@
+# InputMethod
+InputMethod base RNN
