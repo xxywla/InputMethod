@@ -28,7 +28,7 @@ def train():
     dataloader = get_dataloader()
 
     # 加载词表
-    with open(config.PROCESSED_DATA_DIR / 'vocab.txt', 'r') as f:
+    with open(config.PROCESSED_DATA_DIR / 'vocab.txt', 'r', encoding="utf-8") as f:
         vocab_list = [line[:-1] for line in f.readlines()]
 
     model = InputMethodModel(vocab_size=len(vocab_list)).to(device)

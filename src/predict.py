@@ -23,7 +23,7 @@ def predict(text, model, word2index, index2word, device):
 def run_predict():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    with open(config.PROCESSED_DATA_DIR / "vocab.txt") as f:
+    with open(config.PROCESSED_DATA_DIR / "vocab.txt", encoding='utf-8') as f:
         vocab_list = [line[:-1] for line in f.readlines()]
 
     index2word = {i: word for i, word in enumerate(vocab_list)}

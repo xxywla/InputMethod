@@ -6,6 +6,8 @@ PROCESSED_DATA_DIR = DATA_DIR / "processed"
 
 MODEL_PATH = Path(__file__).parent.parent / "model"
 
+DATASET_SAMPLE_RATE = 0.1
+
 SEQ_LEN = 5
 BATCH_SIZE = 128
 EMBEDDING_DIM = 128

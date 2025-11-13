@@ -7,7 +7,7 @@ import config
 class InputMethodDataset(Dataset):
     def __init__(self, data_path):
         super().__init__()
-        self.data = pd.read_json(data_path, lines=True, orient='records').sample(frac=0.01).to_dict(orient='records')
+        self.data = pd.read_json(data_path, lines=True, orient='records').sample(frac=config.DATASET_SAMPLE_RATE).to_dict(orient='records')
 
     def __len__(self):
         return len(self.data)
