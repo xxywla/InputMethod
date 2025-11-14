@@ -2,10 +2,10 @@ import torch
 from torch import nn
 from tqdm import tqdm
 
+import config
 from src.dataset import get_dataloader
 from src.model import InputMethodModel
-
-import config
+from src.tokenizer import JiebaTokenizer
 
 
 def train_one_epoch(model, dataloader, loss_function, optimizer, device):
@@ -27,11 +27,9 @@ def train():
 
     dataloader = get_dataloader()
 
-    # 加载词表
-    with open(config.PROCESSED_DATA_DIR / 'vocab.txt', 'r', encoding="utf-8") as f:
-        vocab_list = [line[:-1] for line in f.readlines()]
+    tokenizer = JiebaTokenizer.from_vocab(config.PROCESSED_DATA_DIR / 'vocab.txt')
 
-    model = InputMethodModel(vocab_size=len(vocab_list)).to(device)
+    model = InputMethodModel(vocab_size=tokenizer.vocab_size).to(device)
 
     loss_function = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)

@@ -1,16 +1,16 @@
-import jieba
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 import config
+from src.tokenizer import JiebaTokenizer
 
 
-def build_dataset(sentences, word2index):
+def build_dataset(sentences, tokenizer):
     dataset_list = []
     seq_len = config.SEQ_LEN
 
     for sentence in sentences:
-        sentence_indexes = [word2index.get(word, 0) for word in jieba.lcut(sentence)]
+        sentence_indexes = tokenizer.encode(sentence)
         for i in range(len(sentence_indexes) - seq_len):
             input_ids = sentence_indexes[i:i + seq_len]
             target_id = sentence_indexes[i + seq_len]
@@ -31,25 +31,14 @@ def process():
     train_sentences, test_sentences = train_test_split(sentences, test_size=0.2)
 
     # 构建词表
-    vocab_set = set()
-    for sentence in train_sentences:
-        for word in jieba.cut(sentence):
-            vocab_set.add(word)
-    vocab_list = ['<unk>'] + list(vocab_set)
-    print(f'词表大小{len(vocab_list)}')
+    JiebaTokenizer.build_vocab(config.PROCESSED_DATA_DIR / "vocab.txt", train_sentences)
 
-    # 保存词表
-    with open(config.PROCESSED_DATA_DIR / "vocab.txt", "w", encoding="utf-8") as f:
-        for word in vocab_list:
-            f.write(word + "\n")
-    print('词表保存完成')
+    tokenizer = JiebaTokenizer.from_vocab(config.PROCESSED_DATA_DIR / "vocab.txt")
 
-    word2index = {word: i for i, word in enumerate(vocab_list)}
-
-    train_dataset = build_dataset(train_sentences, word2index)
+    train_dataset = build_dataset(train_sentences, tokenizer)
     pd.DataFrame(train_dataset).to_json(config.PROCESSED_DATA_DIR / "train_dataset.jsonl", lines=True, orient="records")
 
-    test_dataset = build_dataset(test_sentences, word2index)
+    test_dataset = build_dataset(test_sentences, tokenizer)
     pd.DataFrame(test_dataset).to_json(config.PROCESSED_DATA_DIR / "test_dataset.jsonl", lines=True, orient="records")
 
 
